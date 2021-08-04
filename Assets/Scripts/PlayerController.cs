@@ -12,9 +12,17 @@ public class PlayerController : MonoBehaviour
     private float runSpeed;
     private float applySpeed;
 
+    [SerializeField]
+    private float jumpForce;
+  
 
     //»óÅÂ º¯¼ö
     private bool isRun = false;
+    private bool isGround = true;
+
+    // ¶¥ ÂøÁö ¿©ºÎ
+    private CapsuleCollider capsuleCollider;
+
 
     //¹Î°¨µµ
     [SerializeField]
@@ -37,6 +45,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        capsuleCollider = GetComponent<CapsuleCollider>();
         myRigid = GetComponent<Rigidbody>();
         applySpeed = walkSpeed;
     }
@@ -44,10 +53,29 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        IsGround();
+        TryJump();
         TryRun();
         Move();
         CameraRotation();
         CharacterRotation();
+    }
+    private void IsGround()
+    {
+        isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y+0.1f);
+    
+    }
+    private void TryJump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) && isGround == true)
+        {
+            Jump();
+        }
+    }
+
+    private void Jump()
+    {
+        myRigid.velocity = transform.up * jumpForce;
     }
 
     private void TryRun() 
