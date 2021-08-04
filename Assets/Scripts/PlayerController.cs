@@ -10,7 +10,12 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private float runSpeed;
+
+    [SerializeField]
+    private float crouchSpeed;
+
     private float applySpeed;
+
 
     [SerializeField]
     private float jumpForce;
@@ -18,7 +23,17 @@ public class PlayerController : MonoBehaviour
 
     //상태 변수
     private bool isRun = false;
+    private bool isCrouch = false;
     private bool isGround = true;
+
+
+    // 앉았을 때 얼마나 앉을지 결정하는 변수
+    [SerializeField]
+    private float crouchPosY;
+    private float originPosY;
+    private float applyCrouchPosY;
+
+
 
     // 땅 착지 여부
     private CapsuleCollider capsuleCollider;
@@ -48,6 +63,10 @@ public class PlayerController : MonoBehaviour
         capsuleCollider = GetComponent<CapsuleCollider>();
         myRigid = GetComponent<Rigidbody>();
         applySpeed = walkSpeed;
+
+        //초기화
+        originPosY = theCamera.transform.localPosition.y;
+        applyCrouchPosY = originPosY;
     }
 
     // Update is called once per frame
@@ -56,15 +75,70 @@ public class PlayerController : MonoBehaviour
         IsGround();
         TryJump();
         TryRun();
+        TryCrouch();
         Move();
         CameraRotation();
         CharacterRotation();
     }
+
+    //앉기 시도
+    private void TryCrouch()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            Crouch();
+        }
+    }
+
+    // 실제로 앉기 동작하는 함수
+    private void Crouch()
+    {
+        isCrouch = !isCrouch;
+        // if(isCrouch)
+        //      isCrouch = false;
+        // else
+        //      isCrouch = true;
+
+        if (isCrouch)
+        {
+            applySpeed = crouchSpeed;
+            applyCrouchPosY = crouchPosY;
+        }
+        else
+        {
+            applySpeed = walkSpeed;
+            applyCrouchPosY = originPosY;
+        }
+        StartCoroutine(CrouchCoroutine());
+    }
+
+    // 부드러운 앉기동작 실행
+    IEnumerator CrouchCoroutine()
+    {
+        float _posY = theCamera.transform.localPosition.y;
+        int count = 0;
+
+        while(_posY != applyCrouchPosY)
+        {
+            count++;
+            _posY = Mathf.Lerp(_posY, applyCrouchPosY, 0.3f);
+            theCamera.transform.localPosition = new Vector3(0, _posY, 0);
+            if (count > 15)
+                break;
+            yield return null;
+        }
+        theCamera.transform.localPosition = new Vector3(0, applyCrouchPosY, 0f);
+        
+    }
+
+
+    // 지면체크
     private void IsGround()
     {
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y+0.1f);
     
     }
+    // 점프 시도
     private void TryJump()
     {
         if(Input.GetKeyDown(KeyCode.Space) && isGround == true)
@@ -73,11 +147,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // 점프실행
     private void Jump()
     {
+        //앉은 상태에서 점프하면 앉은 상태 해제
+        if (isCrouch)
+        {
+            Crouch();
+        }
         myRigid.velocity = transform.up * jumpForce;
     }
 
+    //달리기 시도
     private void TryRun() 
     {
         if(Input.GetKey(KeyCode.LeftShift))
@@ -90,17 +171,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //달리기 실행
     private void Running()
     {
+        // 앉은 상태에서 달리면 앉은 상태 해제
+        if (isCrouch)
+        {
+            Crouch();
+        }
         isRun = true;
         applySpeed = runSpeed;
     }
+    // 달리기취소
     private void RunningCancel()
     {
         isRun = false;
         applySpeed = walkSpeed;
     }
 
+    // 움직임 실행
     private void Move()
     {
         float _moveDirX = Input.GetAxisRaw("Horizontal");
@@ -115,10 +204,9 @@ public class PlayerController : MonoBehaviour
     
     }
 
+    // 상하 카메라 회전
     private void CameraRotation()
     {
-
-        // 상하 카메라 회전
         float _xRotation = Input.GetAxisRaw("Mouse Y");
         float _cameraRotationX = _xRotation * lookSensitivity;
         currentCameraRotationX -= _cameraRotationX;
@@ -127,9 +215,9 @@ public class PlayerController : MonoBehaviour
         theCamera.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f);
     }
 
+    // 좌우 캐릭터 회전
     private void CharacterRotation()
     {
-        // 좌우 캐릭터 회전
         float _yRotation = Input.GetAxisRaw("Mouse X");
         Vector3 _characterRotationY = new Vector3(0f, _yRotation, 0f) * lookSensitivity;
         myRigid.MoveRotation(myRigid.rotation * Quaternion.Euler(_characterRotationY));
