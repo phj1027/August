@@ -129,6 +129,7 @@ public class GunController : MonoBehaviour
 
         if(isFineSightMode)
         {
+            StopAllCoroutines();
             StartCoroutine(FineSightActivateCoroutine());
         }
         else
