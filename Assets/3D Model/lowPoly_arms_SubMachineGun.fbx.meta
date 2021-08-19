@@ -27,6 +27,12 @@ ModelImporter:
   - first:
       74: 7276754366007499447
     second: Gun0_Item
+  - first:
+      74: -2462313345951890581
+    second: Gun0_FineSightMode
+  - first:
+      74: 4781951162920444690
+    second: Gun0_Idle
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -176,7 +182,7 @@ ModelImporter:
       takeName: Armature|ArmatureAction
       internalID: 0
       firstFrame: 180
-      lastFrame: 180
+      lastFrame: 190
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
