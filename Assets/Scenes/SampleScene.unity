@@ -4978,13 +4978,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103326964}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1999999, y: 1.2000003, z: 1.2000003}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 337663571}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &337663568
 GameObject:
   m_ObjectHideFlags: 0
@@ -9840,14 +9840,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 337663568}
-  m_LocalRotation: {x: -0.5, y: -0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: -2.900001, y: 0.38500005, z: 0.43099976}
-  m_LocalScale: {x: 0.15000002, y: 0.15000005, z: 0.15000007}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.00035, y: 0.02056, z: -0.00076}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 103326967}
-  m_Father: {fileID: 1092037361}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_Father: {fileID: 1072713549}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &457570071
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10264,6 +10264,11 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!4 &1072713549 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3968331098899573409, guid: 49fc6398720ee754882cff67ff2b9886, type: 3}
+  m_PrefabInstance: {fileID: 1092037360}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1092037360
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10432,8 +10437,8 @@ MonoBehaviour:
   currentBulletCount: 10
   maxBulletCount: 0
   carryBulletCount: 23
-  retroActionForce: 0
-  retroActionFineSightForce: 0
+  retroActionForce: 0.3
+  retroActionFineSightForce: 0.7
   fineSightOriginPos: {x: 0.55, y: 0.335, z: -0.586}
   anim: {fileID: 1092037363}
   muzzleFlash: {fileID: 337663570}

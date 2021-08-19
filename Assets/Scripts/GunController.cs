@@ -70,6 +70,12 @@ public class GunController : MonoBehaviour
         currentFireRate = currentGun.fireRate; // 연사 속도 재계산
         PlaySE(currentGun.fire_Sound);
         currentGun.muzzleFlash.Play();
+
+        // 총기 반동 코루틴 실행
+        StopAllCoroutines();
+        StartCoroutine(RetroActionCoroutine());
+
+
         Debug.Log("총알발사함");
 
 
@@ -155,7 +161,48 @@ public class GunController : MonoBehaviour
         }
         yield return null;
     }
+    IEnumerator RetroActionCoroutine()
+    {
+        Vector3 recoilBack = new Vector3(currentGun.retroActionForce, originPos.y, originPos.z);
+        Vector3 retroActionRecoilBack = new Vector3(currentGun.retroActionFineSightForce,currentGun.fineSightOriginPos.y,currentGun.fineSightOriginPos.z);
+   
+        if(!isFineSightMode)
+        {
+            currentGun.transform.localPosition = originPos;
 
+            //반동시작
+            while(currentGun.transform.localPosition.x <= currentGun.retroActionForce - 0.02f)
+            {
+                currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, recoilBack, 0.4f);
+                yield return null;
+            }
+
+            //원위치
+            while(currentGun.transform.localPosition != originPos)
+            {
+                currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, originPos, 0.1f);
+                yield return null;
+            }
+        }
+        else
+        {
+            currentGun.transform.localPosition = currentGun.fineSightOriginPos; //정조준 상태의 위치로 되돌림
+
+            //반동시작
+            while (currentGun.transform.localPosition.x <= currentGun.retroActionFineSightForce - 0.02f)
+            {
+                currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, retroActionRecoilBack, 0.4f);
+                yield return null;
+            }
+
+            //원위치
+            while (currentGun.transform.localPosition != currentGun.fineSightOriginPos)
+            {
+                currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, currentGun.fineSightOriginPos, 0.1f);
+                yield return null;
+            }
+        }
+    }
     private void PlaySE(AudioClip _clip)
     {
         audioSource.clip = _clip;
