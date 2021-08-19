@@ -10,6 +10,7 @@ public class GunController : MonoBehaviour
 
     private float currentFireRate;
 
+    private bool isReload = false;
 
     private AudioSource audioSource;
 
@@ -34,23 +35,24 @@ public class GunController : MonoBehaviour
     }
     private void TryFire()
     {
-        if(Input.GetButton("Fire1") &&  currentFireRate <= 0)
+        if(Input.GetButton("Fire1") &&  currentFireRate <= 0 && !isReload)
         {
             Fire();
         }
     }
     private void Fire()
     {
-        if (currentGun.currentBulletCount > 0)
+        if(!isReload)
         {
-            Shoot();
+            if (currentGun.currentBulletCount > 0)
+            {
+                Shoot();
+            }
+            else
+            {
+                StartCoroutine(ReloadCoroutine());
+            }
         }
-        else
-        {
-            Reload();
-        }
-       
-
     }
 
     private void Shoot()
@@ -64,12 +66,15 @@ public class GunController : MonoBehaviour
 
     }
 
-    private void Reload()
+    IEnumerator ReloadCoroutine()
     {
+        isReload = true;
+
         if(currentGun.carryBulletCount>0)
         {
             currentGun.anim.SetTrigger("Reload");
 
+            yield return new WaitForSeconds(currentGun.reloadTime);
             if(currentGun.carryBulletCount>=currentGun.reloadBulletCount)
             {
                 currentGun.currentBulletCount = currentGun.reloadBulletCount;
@@ -80,6 +85,8 @@ public class GunController : MonoBehaviour
                 currentGun.currentBulletCount = currentGun.carryBulletCount;
                 currentGun.carryBulletCount = 0;
             }
+
+            isReload = false;
         }
 
     }
