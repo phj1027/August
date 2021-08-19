@@ -23,6 +23,7 @@ public class GunController : MonoBehaviour
     {
         GunFireRateCalc();
         TryFire();
+        TryReload();
     }
 
     private void GunFireRateCalc()
@@ -66,6 +67,14 @@ public class GunController : MonoBehaviour
 
     }
 
+    private void TryReload()
+    {
+        if(Input.GetKeyDown(KeyCode.R) && !isReload && currentGun.currentBulletCount < currentGun.reloadBulletCount)
+        {
+            StartCoroutine(ReloadCoroutine());
+        }
+    }
+
     IEnumerator ReloadCoroutine()
     {
         isReload = true;
@@ -73,6 +82,9 @@ public class GunController : MonoBehaviour
         if(currentGun.carryBulletCount>0)
         {
             currentGun.anim.SetTrigger("Reload");
+
+            currentGun.carryBulletCount += currentGun.currentBulletCount;
+            currentGun.currentBulletCount = 0;
 
             yield return new WaitForSeconds(currentGun.reloadTime);
             if(currentGun.carryBulletCount>=currentGun.reloadBulletCount)
@@ -87,6 +99,10 @@ public class GunController : MonoBehaviour
             }
 
             isReload = false;
+        }
+        else
+        {
+            Debug.Log("소유한 총알이 없습니다.");
         }
 
     }
